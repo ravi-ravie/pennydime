@@ -13,15 +13,14 @@ export default function AuthPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check if the user is returning from a mobile redirect
+  // This checks if the user is returning from the mobile Google redirect
   useEffect(() => {
     const checkRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
         if (result) {
-          // User successfully logged in via redirect. 
-          // App.jsx's onAuthStateChanged will handle the rest.
-          console.log("Logged in via redirect");
+          // Successfully logged in, App.jsx will detect this and redirect
+          console.log("Logged in via mobile redirect");
         }
       } catch (error) {
         console.error(error);
@@ -35,15 +34,15 @@ export default function AuthPage() {
     setErrorMessage('');
     setIsLoading(true);
 
-    // Detect mobile devices
+    // Detect if the user is on a mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     try {
       if (isMobile) {
-        // Mobile browsers block popups, so we use redirect
+        // Mobile requires redirect
         await signInWithRedirect(auth, googleProvider);
       } else {
-        // Desktop uses the standard popup
+        // Desktop uses popup
         await signInWithPopup(auth, googleProvider);
       }
     } catch (error) {
@@ -51,7 +50,7 @@ export default function AuthPage() {
       if (error.code === 'auth/popup-closed-by-user') {
         setErrorMessage('Sign-in cancelled. Please try again.');
       } else if (error.code === 'auth/popup-blocked') {
-        setErrorMessage('Popup blocked by your browser. Please allow popups for this site.');
+        setErrorMessage('Popup blocked. Please allow popups for this site.');
       } else {
         setErrorMessage('Failed to sign in with Google. Please ensure Google Auth is enabled in Firebase.');
       }
@@ -100,7 +99,7 @@ export default function AuthPage() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
             )}
-            {isLoading ? 'Connecting to Google...' : 'Continue with Google'}
+            {isLoading ? 'Connecting...' : 'Continue with Google'}
           </button>
 
           <div className="flex items-center gap-4 my-8 w-full">

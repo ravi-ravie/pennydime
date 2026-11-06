@@ -3,13 +3,13 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "pennydime.vercel.app",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyBJS6X-I02tZ7pJBtg9DDGbY9tgrYrCXnQ",
+  authDomain: "pennydime-auth.firebaseapp.com",
+  projectId: "pennydime-auth",
+  storageBucket: "pennydime-auth.firebasestorage.app",
+  messagingSenderId: "215778342791",
+  appId: "1:215778342791:web:984767ba67f01cb3f24522",
+  measurementId: "G-LBQF3840NL"
 };
 
 const app = initializeApp(firebaseConfig);
