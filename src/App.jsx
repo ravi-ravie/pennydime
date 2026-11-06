@@ -400,6 +400,7 @@ export default function App() {
             onAddAllowancePool={() => { setActivePool(null); setIsAdjustPoolOpen(true); }}
             onDeletePool={handleDeletePool}
             userProfile={userProfile}
+            currentUser={currentUser}
             setUserProfile={setUserProfile}
             setCurrencySymbol={setCurrencySymbol}
             setStartingBalance={setStartingBalance}
