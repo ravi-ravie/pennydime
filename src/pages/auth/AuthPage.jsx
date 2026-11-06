@@ -13,36 +13,34 @@ export default function AuthPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // This checks if the user is returning from the mobile Google redirect
-  useEffect(() => {
+    useEffect(() => {
     const checkRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
         if (result) {
-          // Successfully logged in, App.jsx will detect this and redirect
-          console.log("Logged in via mobile redirect");
+          console.log("Mobile login successful");
         }
       } catch (error) {
         console.error(error);
         setErrorMessage('Failed to complete sign-in. Please try again.');
       }
     };
-    checkRedirectResult();
+    
+    if (!isLoading) {
+      checkRedirectResult();
+    }
   }, []);
 
   const handleGoogleSignIn = async () => {
     setErrorMessage('');
     setIsLoading(true);
 
-    // Detect if the user is on a mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     try {
       if (isMobile) {
-        // Mobile requires redirect
         await signInWithRedirect(auth, googleProvider);
       } else {
-        // Desktop uses popup
         await signInWithPopup(auth, googleProvider);
       }
     } catch (error) {

@@ -65,7 +65,7 @@ export default function App() {
   const [activeAdjustBudget, setActiveAdjustBudget] = useState(null);
   const [toasts, setToasts] = useState([]);
 
-  useEffect(() => {
+    useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const userData = {
@@ -76,16 +76,12 @@ export default function App() {
           tier: 'Sovereign Ledger Member'
         };
         setCurrentUser(userData);
-        if (!hasSyncedProfile.current) {
-          setUserProfile(userData);
-          hasSyncedProfile.current = true;
-        }
+        setUserProfile(userData);
       } else {
         setCurrentUser(null);
-        hasSyncedProfile.current = false; 
         window.location.hash = ''; 
       }
-      setIsAuthLoading(false);
+      setIsAuthLoading(false); 
     });
     return () => unsubscribe();
   }, []);
