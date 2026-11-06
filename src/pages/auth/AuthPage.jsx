@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Lock, AlertCircle, Sparkles } from 'lucide-react';
-import { signInWithPopup } from 'firebase/auth';
+import { 
+  signInWithPopup, 
+  signInWithRedirect, 
+  getRedirectResult,
+  GoogleAuthProvider 
+} from 'firebase/auth';
 import { auth, googleProvider } from '../../firebase';
 import PennyDimeLogo from '../../layouts/PennyDimeLogo';
 
@@ -8,11 +13,39 @@ export default function AuthPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check if the user is returning from a mobile redirect
+  useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          // User successfully logged in via redirect. 
+          // App.jsx's onAuthStateChanged will handle the rest.
+          console.log("Logged in via redirect");
+        }
+      } catch (error) {
+        console.error(error);
+        setErrorMessage('Failed to complete sign-in. Please try again.');
+      }
+    };
+    checkRedirectResult();
+  }, []);
+
   const handleGoogleSignIn = async () => {
     setErrorMessage('');
     setIsLoading(true);
+
+    // Detect mobile devices
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     try {
-      await signInWithPopup(auth, googleProvider);
+      if (isMobile) {
+        // Mobile browsers block popups, so we use redirect
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        // Desktop uses the standard popup
+        await signInWithPopup(auth, googleProvider);
+      }
     } catch (error) {
       console.error(error);
       if (error.code === 'auth/popup-closed-by-user') {
@@ -22,7 +55,6 @@ export default function AuthPage() {
       } else {
         setErrorMessage('Failed to sign in with Google. Please ensure Google Auth is enabled in Firebase.');
       }
-    } finally {
       setIsLoading(false);
     }
   };
@@ -68,7 +100,7 @@ export default function AuthPage() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
             )}
-            {isLoading ? 'Authenticating...' : 'Continue with Google'}
+            {isLoading ? 'Connecting to Google...' : 'Continue with Google'}
           </button>
 
           <div className="flex items-center gap-4 my-8 w-full">
