@@ -1,16 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from 'lucide-react';
 
 export default function UserProfileCard({
   userProfile,
+  currentUser,
   setUserProfile,
   startingBalance,
   setStartingBalance,
   showToast
 }) {
-  const [name, setName] = useState(userProfile?.name || '');
-  const [email, setEmail] = useState(userProfile?.email || '');
+  const initialName = userProfile?.name && userProfile.name !== 'Ledger User' ? userProfile.name : (currentUser?.name || '');
+  const initialEmail = currentUser?.email || userProfile?.email || '';
+
+  const [name, setName] = useState(initialName);
+  const [email, setEmail] = useState(initialEmail);
   const [startBal, setStartBal] = useState(startingBalance || 0);
+
+  // This effect fixes the mobile timing issue
+  useEffect(() => {
+    if (!name && initialName) setName(initialName);
+    if (!email && initialEmail) setEmail(initialEmail);
+  }, [initialName, initialEmail, name, email]);
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
@@ -46,6 +56,7 @@ export default function UserProfileCard({
             readOnly
             className="w-full border-b-2 border-[#eae6df] bg-transparent py-1.5 md:py-2 text-[13px] md:text-[14px] font-medium text-[#727974] opacity-70 cursor-not-allowed"
             value={email}
+            placeholder="Authenticated via Google"
           />
         </div>
 
