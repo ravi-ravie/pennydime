@@ -31,26 +31,20 @@ export default function AuthPage() {
     }
   }, []);
 
-  const handleGoogleSignIn = async () => {
+    const handleGoogleSignIn = async () => {
     setErrorMessage('');
     setIsLoading(true);
 
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
     try {
-      if (isMobile) {
-        await signInWithRedirect(auth, googleProvider);
-      } else {
-        await signInWithPopup(auth, googleProvider);
-      }
+      await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error(error);
       if (error.code === 'auth/popup-closed-by-user') {
         setErrorMessage('Sign-in cancelled. Please try again.');
-      } else if (error.code === 'auth/popup-blocked') {
-        setErrorMessage('Popup blocked. Please allow popups for this site.');
+      } else if (error.code === 'auth/operation-not-supported-in-this-environment') {
+        setErrorMessage('This browser blocks popups. Please try using Chrome or Safari directly.');
       } else {
-        setErrorMessage('Failed to sign in with Google. Please ensure Google Auth is enabled in Firebase.');
+        setErrorMessage(`Error: ${error.message}`);
       }
       setIsLoading(false);
     }
